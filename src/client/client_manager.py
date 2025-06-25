@@ -68,9 +68,14 @@ class ClientManager:
                 self.clients.extend(await self._spawn_clients(10))
             return self.clients.pop(0)
 
-    async def _spawn_clients(self) -> list[httpx.AsyncClient]:
+    async def _spawn_clients(
+        self, count_clients: int | None = None
+    ) -> list[httpx.AsyncClient]:
         """
         Создание клиентов с учетом прокси.
+
+        Args:
+            count_clients (int | None): Количество клиентов для создания.
 
         Returns:
             list[httpx.AsyncClient]: Список созданных HTTP-клиентов.
@@ -78,6 +83,16 @@ class ClientManager:
 
         fake_useragent = FakeUserAgent()
         http_transport = httpx.AsyncHTTPTransport(retries=self.retries)
+
+        if count_clients:
+            self.logger.warning(f"Создаю {count_clients} клиентов без прокси")
+            return [
+                self._generate_client(
+                    fake_useragent,
+                    http_transport,
+                )
+                for _ in range(count_clients)
+            ]
 
         if not self.proxy_file or not self.proxy_file.exists():
             self.logger.warning("Прокси файл не указан или не существует")

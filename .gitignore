@@ -2,7 +2,7 @@ __pycache__
 .env
 .venv
 *proxies*
-result
+results
 logs
 test.html
 test.py
