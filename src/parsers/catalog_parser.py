@@ -312,39 +312,3 @@ class CatalogParser:
                     href = href.split("/catalog/")[1].split("/")[0]
                     items.append(href)
         return items
-
-
-async def test() -> None:
-    try:
-        # request = ParseRequest("000200_000018_RU_NLR_DRGNLR_3107")
-        request = ParseRequest("Петроградская газета 1911", is_search=True)
-
-        client_manager = ClientManager(
-            # proxy_file=Path(__file__).parent / "proxies.txt"
-        )
-        await client_manager.setup()
-
-        page_data = PageData(request)
-        await page_data.load_progress()
-
-        parser = CatalogParser(
-            request=request,
-            client_manager=client_manager,
-            page_data=page_data,
-            num_workers=3,
-            chunk_size=10,
-            max_retries=3,
-        )
-
-        results = await parser.run()
-
-        if results:
-            print("\nПримеры найденных элементов:")
-            for i, item in enumerate(list(results)[:5], 1):
-                print(f"  {i}. {item}")
-    finally:
-        await page_data.save_progress()
-
-
-if __name__ == "__main__":
-    asyncio.run(test())

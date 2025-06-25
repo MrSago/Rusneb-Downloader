@@ -230,20 +230,3 @@ class ClientManager:
             except Exception as e:
                 self.logger.debug(f"Ошибка при проверке прокси {proxy.url}: {str(e)}")
                 return False
-
-
-async def test() -> None:
-    proxy_file = None
-    # proxy_file = Path(__file__).parent / "proxies.txt"
-
-    manager = ClientManager(proxy_file=proxy_file)
-    await manager.setup()
-
-    client = await manager.pop_client()
-    print("Client count:", len(manager.clients))
-
-    await client.aclose()
-
-
-if __name__ == "__main__":
-    asyncio.run(test())
